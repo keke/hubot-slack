@@ -29,7 +29,11 @@ class SlackBot extends Adapter
     @options = options
 
     # Create our slack client object
-    @client = new SlackClient options.token, options.autoReconnect, options.autoMark
+    proxyUrl = process.env.https_proxy || process.env.http_proxy
+    @client = if proxyUrl
+      new SlackClient options.token, options.autoReconnect, options.autoMark, proxyUrl
+    else
+      new SlackClient options.token, options.autoReconnect, options.autoMark
 
     # Setup event handlers
     # TODO: Handle eventual events at (re-)connection time for unreads and provide a config for whether we want to process them
